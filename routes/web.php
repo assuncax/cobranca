@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\CobrancaController;
+use App\Http\Controllers\ConfiguracaoController;
+use App\Http\Controllers\EnvioController;
 use App\Http\Controllers\ImportacaoController;
+use App\Http\Controllers\ReguaController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\WebhookWhatsAppController;
 use Illuminate\Support\Facades\Route;
@@ -24,4 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/importar', [ImportacaoController::class, 'form'])->name('importar.form');
     Route::post('/importar', [ImportacaoController::class, 'previa'])->name('importar.previa');
     Route::post('/importar/confirmar', [ImportacaoController::class, 'confirmar'])->name('importar.confirmar');
+    Route::get('/envios', [EnvioController::class, 'index'])->name('envios.index');
+    Route::get('/regua', [ReguaController::class, 'edit'])->name('regua.edit');
+    Route::put('/regua', [ReguaController::class, 'update'])->name('regua.update');
+    Route::get('/configuracoes', [ConfiguracaoController::class, 'edit'])->name('configuracoes.edit');
+    Route::put('/configuracoes', [ConfiguracaoController::class, 'update'])->name('configuracoes.update');
 });
