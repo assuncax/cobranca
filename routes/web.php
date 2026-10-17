@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CobrancaController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\WebhookWhatsAppController;
 use Illuminate\Support\Facades\Route;
@@ -15,5 +16,8 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [LoginController::class, 'sair'])->name('logout')->middleware('auth');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', fn () => view('layout'));
+    Route::redirect('/', '/cobrancas');
+    Route::resource('cobrancas', CobrancaController::class)->except(['show', 'destroy']);
+    Route::post('/cobrancas/{cobranca}/pagar', [CobrancaController::class, 'pagar'])->name('cobrancas.pagar');
+    Route::post('/cobrancas/{cobranca}/cancelar', [CobrancaController::class, 'cancelar'])->name('cobrancas.cancelar');
 });
