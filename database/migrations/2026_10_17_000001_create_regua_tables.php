@@ -54,6 +54,7 @@ return new class extends Migration
 
         Schema::create('mensagens_recebidas', function (Blueprint $t) {
             $t->id();
+            $t->string('meta_message_id')->nullable()->unique();
             $t->string('telefone', 20);
             $t->foreignId('cliente_id')->nullable()->constrained()->nullOnDelete();
             $t->text('texto');

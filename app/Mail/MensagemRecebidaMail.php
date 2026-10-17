@@ -3,12 +3,16 @@
 namespace App\Mail;
 
 use App\Models\MensagemRecebida;
+use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\SerializesModels;
 
 class MensagemRecebidaMail extends Mailable
 {
+    use Queueable, SerializesModels;
+
     public function __construct(public MensagemRecebida $mensagem) {}
 
     public function envelope(): Envelope

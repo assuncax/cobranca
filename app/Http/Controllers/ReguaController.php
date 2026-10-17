@@ -18,7 +18,7 @@ class ReguaController extends Controller
     {
         $dados = $request->validate([
             'etapas' => 'required|array',
-            'etapas.*.dias' => 'required|integer|between:-60,365',
+            'etapas.*.dias' => 'required|integer|between:-60,365|distinct',
             'etapas.*.template_meta' => ['required', 'regex:/^[a-z0-9_]+$/'],
             'etapas.*.idioma' => 'required|string|max:10',
         ]);

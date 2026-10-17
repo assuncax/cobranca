@@ -9,7 +9,7 @@ class MensagemRecebida extends Model
 {
     protected $table = 'mensagens_recebidas';
 
-    protected $fillable = ['telefone', 'cliente_id', 'texto', 'recebida_em'];
+    protected $fillable = ['telefone', 'cliente_id', 'texto', 'recebida_em', 'meta_message_id'];
 
     protected $casts = ['recebida_em' => 'datetime'];
 

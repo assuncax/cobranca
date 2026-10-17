@@ -10,6 +10,7 @@ use App\Models\EtapaRegua;
 use App\Support\SeletorEtapa;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class ExecutarRegua extends Command
 {
@@ -42,15 +43,18 @@ class ExecutarRegua extends Command
                     continue;
                 }
 
-                $envio = Envio::firstOrCreate(
-                    ['cobranca_id' => $cobranca->id, 'etapa_regua_id' => $escolha['enviar'], 'teste' => $teste],
-                    ['status' => 'pendente'],
-                );
+                // Transação: o envio 'pendente' e o job entram juntos na fila, ou nenhum dos dois.
+                DB::transaction(function () use ($cobranca, $escolha, $teste, &$agendadas) {
+                    $envio = Envio::firstOrCreate(
+                        ['cobranca_id' => $cobranca->id, 'etapa_regua_id' => $escolha['enviar'], 'teste' => $teste],
+                        ['status' => 'pendente'],
+                    );
 
-                if ($envio->wasRecentlyCreated) {
-                    EnviarMensagem::dispatch($envio->id);
-                    $agendadas++;
-                }
+                    if ($envio->wasRecentlyCreated) {
+                        EnviarMensagem::dispatch($envio->id);
+                        $agendadas++;
+                    }
+                });
             }
         });
 

@@ -16,11 +16,15 @@
    cp .env.example .env
    php artisan key:generate
    ```
+   **Guarde o `APP_KEY` gerado em local seguro e nunca rode `key:generate` de novo: as credenciais da Meta ficam criptografadas com ele e se tornam ilegíveis se a chave mudar.**
 7. Edite `.env`:
    ```
    APP_ENV=production
    APP_DEBUG=false
    APP_URL=https://SEU_DOMINIO
+   LOG_STACK=daily
+   LOG_LEVEL=warning
+   SESSION_SECURE_COOKIE=true
    DB_CONNECTION=mysql
    DB_HOST=localhost
    DB_PORT=3306
@@ -49,12 +53,24 @@
    mv public_html public_html_antigo
    ln -s regua/public public_html
    ```
-10. **Avançado → Cron Jobs**: crie um cron **a cada minuto** (`* * * * *`) com o comando:
+10. Pelo SSH, rode `php -v` e confirme que é a versão **8.3**. Se não for, use o caminho completo do PHP 8.3 na linha do cron (Hostinger: por exemplo `/opt/alt/php83/usr/bin/php`).
+11. **Avançado → Cron Jobs**: crie um cron **a cada minuto** (`* * * * *`) com o comando:
     ```
     cd ~/domains/SEU_DOMINIO/regua && php artisan schedule:run >> /dev/null 2>&1
     ```
+    (ou `/opt/alt/php83/usr/bin/php artisan schedule:run ...` se o `php` padrão não for 8.3)
 
 > Sempre que alterar o `.env`, rode `php artisan config:cache` de novo.
+
+## Atualizar o sistema
+
+1. Envie o código novo (upload ou `git pull`).
+2. Pelo SSH, na pasta do projeto:
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   php artisan migrate --force
+   php artisan config:cache && php artisan route:cache && php artisan view:cache
+   ```
 
 ## 2. Meta (WhatsApp Cloud API)
 

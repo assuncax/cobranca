@@ -106,6 +106,22 @@ class WebhookWhatsAppTest extends TestCase
         $mensagem = MensagemRecebida::sole();
         $this->assertSame($cliente->id, $mensagem->cliente_id);
         $this->assertSame('Já paguei', $mensagem->texto);
-        Mail::assertSent(MensagemRecebidaMail::class, fn ($m) => $m->hasTo('dono@exemplo.com'));
+        $this->assertSame('2026-10-20 09:40:00', $mensagem->recebida_em->format('Y-m-d H:i:s'));
+        Mail::assertQueued(MensagemRecebidaMail::class, fn ($m) => $m->hasTo('dono@exemplo.com'));
+    }
+
+    public function test_mensagem_repetida_pela_meta_nao_duplica(): void
+    {
+        Mail::fake();
+        Configuracao::set('email_avisos', 'dono@exemplo.com');
+        $payload = $this->payload(['messages' => [[
+            'from' => '551199998888', 'id' => 'wamid.in', 'timestamp' => '1792500000', 'type' => 'text', 'text' => ['body' => 'Oi'],
+        ]]]);
+
+        $this->postar($payload)->assertOk();
+        $this->postar($payload)->assertOk();
+
+        $this->assertSame(1, MensagemRecebida::count());
+        Mail::assertQueuedCount(1);
     }
 }

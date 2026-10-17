@@ -47,6 +47,16 @@ class TelasAdministrativasTest extends TestCase
         $this->assertFalse($etapa->ativa);
     }
 
+    public function test_regua_recusa_dias_repetidos(): void
+    {
+        [$a, $b] = EtapaRegua::orderBy('ordem')->take(2)->get();
+
+        $this->put('/regua', ['etapas' => [
+            $a->id => ['dias' => 5, 'template_meta' => 'a', 'idioma' => 'pt_BR'],
+            $b->id => ['dias' => 5, 'template_meta' => 'b', 'idioma' => 'pt_BR'],
+        ]])->assertSessionHasErrors("etapas.{$a->id}.dias");
+    }
+
     public function test_regua_recusa_nome_de_template_invalido(): void
     {
         $etapa = EtapaRegua::first();

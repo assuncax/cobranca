@@ -15,12 +15,16 @@
                 @foreach ($etapas as $etapa)
                     <tr>
                         <td><input type="checkbox" name="etapas[{{ $etapa->id }}][ativa]" value="1" @checked(old("etapas.{$etapa->id}.ativa", $etapa->ativa))></td>
-                        <td><input type="number" name="etapas[{{ $etapa->id }}][dias]" value="{{ old("etapas.{$etapa->id}.dias", $etapa->dias) }}" required></td>
+                        <td><input type="number" name="etapas[{{ $etapa->id }}][dias]" value="{{ old("etapas.{$etapa->id}.dias", $etapa->dias) }}" required>
+                            @error("etapas.{$etapa->id}.dias")<small class="falhou">{{ $message }}</small>@enderror
+                        </td>
                         <td>
                             <input name="etapas[{{ $etapa->id }}][template_meta]" value="{{ old("etapas.{$etapa->id}.template_meta", $etapa->template_meta) }}" required>
                             @error("etapas.{$etapa->id}.template_meta")<small class="falhou">Use apenas letras minúsculas, números e _</small>@enderror
                         </td>
-                        <td><input name="etapas[{{ $etapa->id }}][idioma]" value="{{ old("etapas.{$etapa->id}.idioma", $etapa->idioma) }}" required></td>
+                        <td><input name="etapas[{{ $etapa->id }}][idioma]" value="{{ old("etapas.{$etapa->id}.idioma", $etapa->idioma) }}" required>
+                            @error("etapas.{$etapa->id}.idioma")<small class="falhou">{{ $message }}</small>@enderror
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

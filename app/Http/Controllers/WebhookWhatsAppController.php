@@ -80,15 +80,20 @@ class WebhookWhatsAppController extends Controller
         $telefone = Telefone::normalizar($dados['from'] ?? '') ?? '+'.($dados['from'] ?? '');
         $cliente = Cliente::whereIn('telefone', Telefone::variantes($telefone))->first();
 
-        $mensagem = MensagemRecebida::create([
+        $campos = [
             'telefone' => $cliente?->telefone ?? $telefone,
             'cliente_id' => $cliente?->id,
             'texto' => $dados['text']['body'] ?? '['.($dados['type'] ?? 'mensagem').']',
-            'recebida_em' => isset($dados['timestamp']) ? Carbon::createFromTimestamp((int) $dados['timestamp']) : now(),
-        ]);
+            'recebida_em' => isset($dados['timestamp']) ? Carbon::createFromTimestamp((int) $dados['timestamp'], config('app.timezone')) : now(),
+        ];
 
-        if ($email = Configuracao::get('email_avisos')) {
-            Mail::to($email)->send(new MensagemRecebidaMail($mensagem));
+        // A Meta reenvia o webhook se não receber 200 a tempo; o id da mensagem evita duplicar.
+        $mensagem = isset($dados['id'])
+            ? MensagemRecebida::firstOrCreate(['meta_message_id' => $dados['id']], $campos)
+            : MensagemRecebida::create($campos);
+
+        if ($mensagem->wasRecentlyCreated && $email = Configuracao::get('email_avisos')) {
+            Mail::to($email)->queue(new MensagemRecebidaMail($mensagem));
         }
     }
 }
