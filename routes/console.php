@@ -11,3 +11,6 @@ Schedule::command('regua:executar')
 Schedule::command('queue:work --stop-when-empty --max-time=50')
     ->everyMinute()
     ->withoutOverlapping(2);
+
+Schedule::command('regua:resumo')
+    ->weekdays()->at('10:00')->timezone('America/Sao_Paulo');
