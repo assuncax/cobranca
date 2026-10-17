@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CobrancaController;
+use App\Http\Controllers\ImportacaoController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\WebhookWhatsAppController;
 use Illuminate\Support\Facades\Route;
@@ -20,4 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('cobrancas', CobrancaController::class)->except(['show', 'destroy']);
     Route::post('/cobrancas/{cobranca}/pagar', [CobrancaController::class, 'pagar'])->name('cobrancas.pagar');
     Route::post('/cobrancas/{cobranca}/cancelar', [CobrancaController::class, 'cancelar'])->name('cobrancas.cancelar');
+    Route::get('/importar', [ImportacaoController::class, 'form'])->name('importar.form');
+    Route::post('/importar', [ImportacaoController::class, 'previa'])->name('importar.previa');
+    Route::post('/importar/confirmar', [ImportacaoController::class, 'confirmar'])->name('importar.confirmar');
 });
